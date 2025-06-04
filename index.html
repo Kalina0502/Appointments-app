@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar App</title>
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- User View (Default) -->
+        <div id="user-view" class="container">
+            <div class="header">
+                <h1>Book an Appointment</h1>
+                <button onclick="showAdminLogin()" class="admin-btn">Administrator</button>
+            </div>
+            <div class="calendar-container">
+                <div class="calendar-wrapper">
+                    <div id="calendar"></div>
+                    <div id="time-slots">
+                        <h2>Available Time Slots</h2>
+                        <div id="slots-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin-view" class="container hidden">
+            <div class="header">
+                <h1>Appointment Management</h1>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+            <div class="admin-dashboard">
+                <div class="admin-calendar">
+                    <h2>Calendar Overview</h2>
+                    <div id="admin-calendar"></div>
+                </div>
+                <div class="admin-controls">
+                    <button onclick="showNewAppointmentModal()" class="action-btn">New Appointment</button>
+                </div>
+                <div id="appointments-list"></div>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div id="admin-login-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal('admin-login-modal')">&times;</span>
+                <h2>Administrator Login</h2>
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Appointment Modal -->
+        <div id="appointment-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal('appointment-modal')">&times;</span>
+                <h2>Book Appointment</h2>
+                <form id="appointment-form">
+                    <div class="form-group">
+                        <label for="full-name">Full Name:</label>
+                        <input type="text" id="full-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number:</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toast Message Container -->
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="app.js"></script>
+</body>
+</html> 
