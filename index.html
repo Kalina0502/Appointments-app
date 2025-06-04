@@ -18,8 +18,10 @@
             </div>
             <div class="calendar-container">
                 <div class="calendar-wrapper">
-                    <div id="calendar"></div>
-                    <div id="time-slots">
+                    <div class="calendar-section">
+                        <div id="calendar"></div>
+                    </div>
+                    <div class="time-slots-section">
                         <h2>Available Time Slots</h2>
                         <div id="slots-container"></div>
                     </div>
@@ -34,14 +36,17 @@
                 <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
             <div class="admin-dashboard">
-                <div class="admin-calendar">
-                    <h2>Calendar Overview</h2>
+                <div class="admin-calendar-section">
                     <div id="admin-calendar"></div>
+                    <div class="admin-controls">
+                        <button onclick="showAllAppointments()" class="action-btn">All Appointments</button>
+                        <button onclick="showNewAppointmentModal()" class="action-btn">New Appointment</button>
+                    </div>
                 </div>
-                <div class="admin-controls">
-                    <button onclick="showNewAppointmentModal()" class="action-btn">New Appointment</button>
+                <div class="admin-appointments-section">
+                    <h2 id="admin-appointments-title">All Appointments</h2>
+                    <div id="appointments-list"></div>
                 </div>
-                <div id="appointments-list"></div>
             </div>
         </div>
 

@@ -2,15 +2,51 @@
 let currentRole = 'user';
 let selectedDate = null;
 let selectedTime = null;
-let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+let appointments = [];
 let userCalendar = null;
 let adminCalendar = null;
+let filteredDate = null;
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
+    loadAppointments();
     initializeCalendars();
     setupEventListeners();
 });
+
+// Data persistence functions
+function loadAppointments() {
+    const storedAppointments = localStorage.getItem('appointments');
+    appointments = storedAppointments ? JSON.parse(storedAppointments) : [];
+}
+
+function saveAppointments() {
+    localStorage.setItem('appointments', JSON.stringify(appointments));
+    // Refresh calendar views
+    if (userCalendar) userCalendar.redraw();
+    if (adminCalendar) adminCalendar.redraw();
+}
+
+// Date handling functions
+function formatDateForStorage(date) {
+    // Ensure we're working with local date to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function parseDate(dateStr) {
+    // Parse YYYY-MM-DD string into local date
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+function isSameDate(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
+}
 
 // Calendar initialization
 function initializeCalendars() {
@@ -21,14 +57,14 @@ function initializeCalendars() {
         minDate: "today",
         onChange: function(selectedDates) {
             if (selectedDates.length > 0) {
-                selectedDate = selectedDates[0].toISOString().split('T')[0];
+                selectedDate = formatDateForStorage(selectedDates[0]);
                 renderTimeSlots(selectedDate);
             }
         },
         onDayCreate: function(dObj, dStr, fp, dayElem) {
-            const date = dayElem.dateObj.toISOString().split('T')[0];
+            const date = formatDateForStorage(dayElem.dateObj);
             if (isDateFullyBooked(date)) {
-                dayElem.classList.add('booked');
+                dayElem.classList.add('fully-booked');
             }
         }
     });
@@ -38,10 +74,18 @@ function initializeCalendars() {
         inline: true,
         dateFormat: "Y-m-d",
         minDate: "today",
+        onChange: function(selectedDates) {
+            if (selectedDates.length > 0) {
+                filteredDate = formatDateForStorage(selectedDates[0]);
+                renderAppointmentsList(filteredDate);
+                document.getElementById('admin-appointments-title').textContent = 
+                    `Appointments for ${formatDate(filteredDate)}`;
+            }
+        },
         onDayCreate: function(dObj, dStr, fp, dayElem) {
-            const date = dayElem.dateObj.toISOString().split('T')[0];
-            if (isDateFullyBooked(date)) {
-                dayElem.classList.add('booked');
+            const date = formatDateForStorage(dayElem.dateObj);
+            if (hasAppointmentsOnDate(date)) {
+                dayElem.classList.add('has-appointments');
             }
         }
     });
@@ -90,7 +134,7 @@ function setupEventListeners() {
         if (currentRole === 'user') {
             renderTimeSlots(selectedDate);
         } else {
-            renderAppointmentsList();
+            renderAppointmentsList(filteredDate);
         }
     });
 }
@@ -107,7 +151,17 @@ function logout() {
     showToast('Logged out successfully');
 }
 
+function showAllAppointments() {
+    filteredDate = null;
+    document.getElementById('admin-appointments-title').textContent = 'All Appointments';
+    renderAppointmentsList();
+}
+
 // Calendar and time slot functionality
+function hasAppointmentsOnDate(date) {
+    return appointments.some(apt => apt.date === date);
+}
+
 function isDateFullyBooked(date) {
     const timeSlots = generateTimeSlots();
     return timeSlots.every(time => isTimeSlotBooked(date, time));
@@ -168,27 +222,39 @@ function closeModal(modalId) {
 }
 
 // Appointment management
-function renderAppointmentsList() {
+function renderAppointmentsList(date = null) {
     const list = document.getElementById('appointments-list');
     list.innerHTML = '';
     
-    appointments.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(apt => {
-        const item = document.createElement('div');
-        item.className = 'appointment-item';
-        item.innerHTML = `
-            <div>
-                <strong>${apt.name}</strong><br>
-                ${apt.email} | ${apt.phone}<br>
-                ${apt.date} at ${apt.time}<br>
-                ${apt.description}
-            </div>
-            <div>
-                <button onclick="editAppointment(${apt.id})" class="action-btn">Edit</button>
-                <button onclick="deleteAppointment(${apt.id})" class="action-btn">Delete</button>
-            </div>
-        `;
-        list.appendChild(item);
-    });
+    let filteredAppointments = appointments;
+    if (date) {
+        filteredAppointments = appointments.filter(apt => apt.date === date);
+    }
+    
+    if (filteredAppointments.length === 0) {
+        list.innerHTML = '<div class="no-appointments">No appointments found</div>';
+        return;
+    }
+    
+    filteredAppointments
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .forEach(apt => {
+            const item = document.createElement('div');
+            item.className = 'appointment-item';
+            item.innerHTML = `
+                <div>
+                    <strong>${apt.name}</strong><br>
+                    ${apt.email} | ${apt.phone}<br>
+                    ${formatDate(apt.date)} at ${apt.time}<br>
+                    ${apt.description}
+                </div>
+                <div>
+                    <button onclick="editAppointment(${apt.id})" class="action-btn">Edit</button>
+                    <button onclick="deleteAppointment(${apt.id})" class="action-btn">Delete</button>
+                </div>
+            `;
+            list.appendChild(item);
+        });
 }
 
 function editAppointment(id) {
@@ -217,7 +283,7 @@ function editAppointment(id) {
         saveAppointments();
         showToast('Appointment updated successfully!');
         closeModal('appointment-modal');
-        renderAppointmentsList();
+        renderAppointmentsList(filteredDate);
         
         // Reset the form handler
         document.getElementById('appointment-form').onsubmit = null;
@@ -229,7 +295,7 @@ function deleteAppointment(id) {
         appointments = appointments.filter(apt => apt.id !== id);
         saveAppointments();
         showToast('Appointment deleted successfully!');
-        renderAppointmentsList();
+        renderAppointmentsList(filteredDate);
     }
 }
 
@@ -240,12 +306,15 @@ function showNewAppointmentModal() {
     showAppointmentModal();
 }
 
-// Data persistence
-function saveAppointments() {
-    localStorage.setItem('appointments', JSON.stringify(appointments));
-    // Refresh calendar views
-    userCalendar.redraw();
-    adminCalendar.redraw();
+// Utility functions
+function formatDate(dateStr) {
+    const date = parseDate(dateStr);
+    return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 }
 
 // Toast notifications
