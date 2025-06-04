@@ -69,11 +69,24 @@ function initializeCalendars() {
         }
     });
 
+    // Add Today button to user calendar
+    const userCalendarContainer = document.querySelector('.calendar-section');
+    const userTodayBtn = document.createElement('button');
+    userTodayBtn.className = 'today-btn';
+    userTodayBtn.textContent = 'Today';
+    userTodayBtn.onclick = () => {
+        const today = new Date();
+        userCalendar.setDate(today);
+        selectedDate = formatDateForStorage(today);
+        renderTimeSlots(selectedDate);
+    };
+    userCalendarContainer.appendChild(userTodayBtn);
+
     // Admin calendar
     adminCalendar = flatpickr("#admin-calendar", {
         inline: true,
         dateFormat: "Y-m-d",
-        minDate: "today",
+        minDate: "2020-01-01", // Allow viewing past dates
         onChange: function(selectedDates) {
             if (selectedDates.length > 0) {
                 filteredDate = formatDateForStorage(selectedDates[0]);
@@ -89,6 +102,21 @@ function initializeCalendars() {
             }
         }
     });
+
+    // Add Today button to admin calendar
+    const adminCalendarContainer = document.querySelector('.admin-calendar-section');
+    const adminTodayBtn = document.createElement('button');
+    adminTodayBtn.className = 'today-btn';
+    adminTodayBtn.textContent = 'Today';
+    adminTodayBtn.onclick = () => {
+        const today = new Date();
+        adminCalendar.setDate(today);
+        filteredDate = formatDateForStorage(today);
+        renderAppointmentsList(filteredDate);
+        document.getElementById('admin-appointments-title').textContent = 
+            `Appointments for ${formatDate(filteredDate)}`;
+    };
+    adminCalendarContainer.appendChild(adminTodayBtn);
 }
 
 // Event listeners setup

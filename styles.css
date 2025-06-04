@@ -99,6 +99,7 @@ body {
 .calendar-section {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .time-slots-section {
@@ -125,126 +126,72 @@ body {
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 }
 
+/* Admin calendar specific styles */
+.admin-calendar-section .flatpickr-calendar {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.admin-calendar-section .flatpickr-day {
+    font-size: 1.1em;
+    height: 45px;
+    line-height: 45px;
+    margin: 2px;
+}
+
+.admin-calendar-section .flatpickr-months {
+    padding: 1rem 0;
+    margin-bottom: 0.5rem;
+}
+
+.admin-calendar-section .flatpickr-current-month {
+    font-size: 1.4em;
+    padding: 0.5rem 0;
+}
+
+.admin-calendar-section .flatpickr-monthDropdown-months {
+    font-size: 1.2em;
+}
+
+/* Admin Today button positioning */
+.admin-calendar-section .today-btn {
+    position: static;
+    transform: none;
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1em;
+}
+
+.admin-calendar-section .flatpickr-months {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.admin-calendar-section .flatpickr-months .flatpickr-prev-month,
+.admin-calendar-section .flatpickr-months .flatpickr-next-month {
+    position: static;
+    padding: 0.5rem;
+}
+
+.admin-calendar-section .flatpickr-months .flatpickr-prev-month svg,
+.admin-calendar-section .flatpickr-months .flatpickr-next-month svg {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+/* Admin appointments section alignment */
 .admin-appointments-section {
     background-color: white;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Flatpickr customization */
-.flatpickr-calendar {
-    width: 100% !important;
-    box-shadow: none !important;
-    border: 1px solid #eee !important;
-}
-
-/* User calendar */
-#calendar .flatpickr-calendar {
-    width: 100% !important;
-    font-size: 1em;
-}
-
-/* Admin calendar */
-#admin-calendar .flatpickr-calendar {
-    width: 100% !important;
-    font-size: 1.2em;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* Admin calendar header alignment */
-#admin-calendar .flatpickr-months {
-    padding: 0.5rem 0;
-    background: #f8f9fa;
-    border-bottom: 1px solid #eee;
-}
-
-#admin-calendar .flatpickr-month {
-    height: auto;
-    padding: 0.5rem 0;
-}
-
-#admin-calendar .flatpickr-current-month {
-    padding: 0.5rem 0;
-    font-size: 1.2em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-#admin-calendar .flatpickr-monthDropdown-months {
-    padding: 0.25rem;
-    font-size: 1em;
-}
-
-#admin-calendar .flatpickr-current-month .flatpickr-monthDropdown-months {
-    padding: 0.25rem;
-    font-size: 1em;
-    width: auto;
-}
-
-#admin-calendar .flatpickr-weekday {
-    padding: 0.5rem 0;
-    font-size: 0.9em;
-    color: #666;
-}
-
-/* Admin calendar day cells */
-#admin-calendar .flatpickr-day {
-    position: relative;
-    height: 3.5rem;
-    line-height: 3.5rem;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    border: 1px solid #eee;
-}
-
-/* Admin view appointment indicators */
-#admin-calendar .flatpickr-day.has-appointments::after {
-    content: '';
-    position: absolute;
-    bottom: 0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    background-color: #0066ff;
-    border-radius: 50%;
-    z-index: 1;
-}
-
-#admin-calendar .flatpickr-day.selected {
-    background-color: #0066ff !important;
-    border-color: #0066ff !important;
-    color: white !important;
-}
-
-#admin-calendar .flatpickr-day.selected.has-appointments::after {
-    background-color: white;
-}
-
-#admin-calendar .flatpickr-day:hover {
-    background-color: #f0f7ff;
-}
-
-/* Admin calendar navigation */
-#admin-calendar .flatpickr-months .flatpickr-prev-month,
-#admin-calendar .flatpickr-months .flatpickr-next-month {
-    top: 0.5rem;
-    padding: 0.5rem;
-    height: auto;
-    width: auto;
-}
-
-#admin-calendar .flatpickr-months .flatpickr-prev-month svg,
-#admin-calendar .flatpickr-months .flatpickr-next-month svg {
-    width: 1rem;
-    height: 1rem;
+    margin-top: 1rem;
 }
 
 /* User view fully booked dates */
@@ -508,4 +455,92 @@ body {
     .action-btn {
         width: 100%;
     }
+    
+    .today-btn {
+        position: static;
+        transform: none;
+        margin: 0.5rem 0;
+        width: 100%;
+    }
+    
+    .flatpickr-months {
+        padding-bottom: 3rem;
+        flex-direction: column;
+    }
+    
+    .flatpickr-current-month {
+        margin-top: 0.5rem;
+    }
+}
+
+/* Calendar header styles */
+.flatpickr-months {
+    padding: 0.5rem 0;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flatpickr-month {
+    height: auto;
+    padding: 0.5rem 0;
+}
+
+.flatpickr-current-month {
+    padding: 0.5rem 0;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.flatpickr-monthDropdown-months {
+    padding: 0.25rem;
+    font-size: 1em;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    padding: 0.25rem;
+    font-size: 1em;
+    width: auto;
+}
+
+/* Calendar navigation */
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    top: 0.5rem;
+    padding: 0.5rem;
+    height: auto;
+    width: auto;
+}
+
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Today button styles */
+.today-btn {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.25rem 0.75rem;
+    background-color: #0066ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 1;
+}
+
+.today-btn:hover {
+    background-color: #0052cc;
 } 
